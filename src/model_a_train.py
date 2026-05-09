@@ -12,6 +12,7 @@ Tasks:
 Supported models (one per commit, accumulated over commits 5-7-8):
   * lr   - Logistic Regression       (Commit 5)
   * svm  - Linear SVM (calibrated)   (Commit 6)
+  * nb   - Multinomial Naive Bayes   (Commit 8)
 """
 
 import os
@@ -23,6 +24,7 @@ from scipy import sparse
 from sklearn.linear_model import LogisticRegression
 from sklearn.svm import LinearSVC
 from sklearn.calibration import CalibratedClassifierCV
+from sklearn.naive_bayes import MultinomialNB
 from sklearn.metrics import (
     accuracy_score,
     f1_score,
@@ -84,7 +86,14 @@ def evaluate_mcq(probs: np.ndarray, df: pd.DataFrame, name: str):
     return acc
 
 
-# ── Trainers ─────────────────────────────────────────────────────────────
+# ── Helpers ──────────────────────────────────────────────────────────────────────
+def _clip_nonneg(X):
+    X = X.copy()
+    X.data = np.clip(X.data, 0.0, None)
+    return X
+
+
+# ── Trainers ──────────────────────────────────────────────────────────────────
 def train_lr(X_train, y_train):
     print("Training Logistic Regression ...")
     clf = LogisticRegression(
@@ -106,6 +115,18 @@ def train_svm(X_train, y_train):
     return clf
 
 
+def train_nb(X_train, y_train):
+    """Multinomial Naive Bayes (works directly on sparse non-negative features)."""
+    print("Training Multinomial Naive Bayes ...")
+    # MultinomialNB requires non-negative features; clip the small handcrafted
+    # negative values (cosine sims are already in [0,1] for our setup).
+    X_pos = X_train.copy()
+    X_pos.data = np.clip(X_pos.data, 0.0, None)
+    clf = MultinomialNB(alpha=0.5)
+    clf.fit(X_pos, y_train)
+    return clf
+
+
 # ── Main ─────────────────────────────────────────────────────────────────
 def main(model_name: str):
     print(f"=== Training Model A | {model_name.upper()} ===")
@@ -121,6 +142,12 @@ def main(model_name: str):
     elif model_name == "svm":
         clf = train_svm(X_train, y_train)
         out_path = os.path.join(MODELS_DIR, "model_a_svm.joblib")
+    elif model_name == "nb":
+        clf = train_nb(X_train, y_train)
+        out_path = os.path.join(MODELS_DIR, "model_a_nb.joblib")
+        # NB needs non-negative inputs at predict time too
+        X_val = _clip_nonneg(X_val)
+        X_test = _clip_nonneg(X_test)
     else:
         raise ValueError(f"Unknown model: {model_name}")
 
@@ -163,7 +190,7 @@ def main(model_name: str):
 
 if __name__ == "__main__":
     p = argparse.ArgumentParser()
-    p.add_argument("--model", default="lr", choices=["lr", "svm"],
+    p.add_argument("--model", default="lr", choices=["lr", "svm", "nb"],
                    help="Which classical model to train (more added in later commits)")
     args = p.parse_args()
     main(args.model)
