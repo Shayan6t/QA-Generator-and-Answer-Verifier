@@ -14,10 +14,10 @@
 | #  | Commit Message                                      | Status      |
 |----|-----------------------------------------------------|-------------|
 | 1  | `Initial project structure & requirements.txt`      | ✅ Done     |
-| 2  | `Add RACE dataset to data/raw/`                     | ⬜ Pending  |
-| 3  | `EDA notebook — distributions & visualizations`     | ⬜ Pending  |
-| 4  | `preprocessing.py — cleaning & feature engineering` | ⬜ Pending  |
-| 5  | `Model A — Logistic Regression answer verifier`     | ⬜ Pending  |
+| 2  | `Add RACE dataset to data/raw/`                     | ✅ Done     |
+| 3  | `EDA notebook — distributions & visualizations`     | ✅ Done     |
+| 4  | `preprocessing.py — cleaning & feature engineering` | ✅ Done     |
+| 5  | `Model A — Logistic Regression answer verifier`     | ✅ Done (MCQ acc 35.2%) |
 | 6  | `Model A — SVM answer verifier`                     | ⬜ Pending  |
 | 7  | `Model A — Unsupervised (K-Means + Label Prop)`     | ⬜ Pending  |
 | 8  | `Model A — Ensemble (soft vote / stacking)`         | ⬜ Pending  |

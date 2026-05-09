@@ -10,8 +10,8 @@ Tasks:
   4. Persist the trained model under models/model_a/traditional/.
 
 Supported models (one per commit, accumulated over commits 5-7-8):
-  * lr   — Logistic Regression       (Commit 5)
-  * svm  — Linear SVM (calibrated)   (Commit 6)
+  * lr   - Logistic Regression       (Commit 5)
+  * svm  - Linear SVM (calibrated)   (Commit 6)
 """
 
 import os
@@ -21,6 +21,8 @@ import numpy as np
 import pandas as pd
 from scipy import sparse
 from sklearn.linear_model import LogisticRegression
+from sklearn.svm import LinearSVC
+from sklearn.calibration import CalibratedClassifierCV
 from sklearn.metrics import (
     accuracy_score,
     f1_score,
@@ -95,6 +97,15 @@ def train_lr(X_train, y_train):
     return clf
 
 
+def train_svm(X_train, y_train):
+    """Linear SVM wrapped in CalibratedClassifierCV to expose predict_proba."""
+    print("Training Linear SVM (calibrated) ...")
+    base = LinearSVC(C=1.0, max_iter=2000, dual="auto")
+    clf = CalibratedClassifierCV(base, method="sigmoid", cv=3, n_jobs=-1)
+    clf.fit(X_train, y_train)
+    return clf
+
+
 # ── Main ─────────────────────────────────────────────────────────────────
 def main(model_name: str):
     print(f"=== Training Model A | {model_name.upper()} ===")
@@ -107,6 +118,9 @@ def main(model_name: str):
     if model_name == "lr":
         clf = train_lr(X_train, y_train)
         out_path = os.path.join(MODELS_DIR, "model_a_lr.joblib")
+    elif model_name == "svm":
+        clf = train_svm(X_train, y_train)
+        out_path = os.path.join(MODELS_DIR, "model_a_svm.joblib")
     else:
         raise ValueError(f"Unknown model: {model_name}")
 
@@ -149,7 +163,7 @@ def main(model_name: str):
 
 if __name__ == "__main__":
     p = argparse.ArgumentParser()
-    p.add_argument("--model", default="lr", choices=["lr"],
+    p.add_argument("--model", default="lr", choices=["lr", "svm"],
                    help="Which classical model to train (more added in later commits)")
     args = p.parse_args()
     main(args.model)

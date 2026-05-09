@@ -39,3 +39,6 @@ desktop.ini
 # Environment
 .env
 *.log
+
+# Personal planning notes
+IMPLEMENTATION_PLAN.md
