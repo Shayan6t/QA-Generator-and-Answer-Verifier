@@ -1,0 +1,41 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+*.egg-info/
+dist/
+build/
+
+# Data (CSVs are 148 MB each — too large for GitHub)
+data/raw/*.csv
+data/processed/
+*.csv
+
+# Model checkpoints (large binary files)
+models/model_a/traditional/*.pkl
+models/model_b/traditional/*.pkl
+models/model_a/traditional/*.joblib
+models/model_b/traditional/*.joblib
+
+# Jupyter
+.ipynb_checkpoints/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Environment
+.env
+*.log

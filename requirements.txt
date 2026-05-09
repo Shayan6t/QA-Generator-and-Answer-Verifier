@@ -1,0 +1,23 @@
+# Core ML & Data
+pandas==2.2.2
+numpy==1.26.4
+scikit-learn==1.5.1
+scipy==1.13.1
+
+# NLP & Feature Engineering
+gensim==4.3.2
+
+# Visualization (EDA)
+matplotlib==3.9.1
+seaborn==0.13.2
+wordcloud==1.9.3
+plotly==5.22.0
+
+# UI
+streamlit==1.36.0
+
+# Model Persistence
+joblib==1.4.2
+
+# Utilities
+tqdm==4.66.4
